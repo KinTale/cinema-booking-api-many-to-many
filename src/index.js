@@ -15,13 +15,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-
 // Add your router below
 
+const seatRouter = require('../router/seat')
 
-
-
-
+app.use('/seat', seatRouter)
 
 
 // Set up a default "catch all" route to use when someone visits a route

@@ -6,10 +6,119 @@ async function seed() {
     const movies = await createMovies();
     const screens = await createScreens();
     await createScreenings(screens, movies);
-
+    await createseats()
+    await createTickets()
     process.exit(0);
 }
 
+
+async function createseats() {
+
+    const seats = await prisma.seat.createMany({
+        data: [{
+            seatType: 'A1',
+            screenId: 1,
+        }, {
+            seatType: 'A2',
+            screenId: 1,
+
+        }, {
+            seatType: 'A3',
+            screenId: 1,
+        }, {
+            seatType: 'A4',
+            screenId: 1,
+        }, {
+            seatType: 'A5',
+            screenId: 2,
+        }, {
+            seatType: 'A6',
+            screenId: 2,
+        }, {
+            seatType: 'A7',
+            screenId: 2,
+        }, {
+            seatType: 'A8',
+            screenId: 2,
+        }]
+    })
+
+    console.log(seats)
+    return seats
+}
+
+async function createTickets() {
+    const alice = await prisma.customer.findFirst({
+        where: {
+            name: 'Alice'
+        }
+    })
+    const screeningId = await prisma.screening.findFirst({
+        where: {
+            id: 2
+        }
+    })
+
+    const rawTickets =
+        [{
+            screening: {
+                connect: {
+                    id: screeningId.id,
+                }
+            },
+            customer: {
+                connect: {
+                    id: alice.id
+                }
+            },
+            seat: {
+                connect: {
+                    seatType: 'A1'
+                }
+            }
+        }, {
+            screening: {
+                connect: {
+                    id: screeningId.id
+                }
+            },
+            customer: {
+                connect: {
+                    id: alice.id
+                }
+            },
+            seat: {
+                connect: {
+                    seatType: 'A2'
+                }
+            }
+        }, {
+            screening: {
+                connect: {
+                    id: screeningId.id
+                }
+            },
+            customer: {
+                connect: {
+                    id: alice.id
+                }
+            },
+            seat: {
+                connect: {
+                    seatType: 'A3'
+                }
+            }
+        }]
+
+    const makeTicket = []
+
+    for (const rawTicket of rawTickets) {
+        const ticket = await prisma.ticket.create({ data: rawTicket })
+        makeTicket.push(ticket)
+    }
+    console.log(makeTicket)
+    return makeTicket
+}
 async function createCustomer() {
     const customer = await prisma.customer.create({
         data: {
@@ -96,6 +205,7 @@ async function createScreenings(screens, movies) {
         }
     }
 }
+
 
 seed()
     .catch(async e => {
