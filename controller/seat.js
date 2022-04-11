@@ -18,7 +18,7 @@ const getScreen = async (req, res) => {
     })
     res.json({ seatsInScreen: screen })
 }
-
+/*
 const createTicket = async (req, res) => {
 
     const { screeningId, customerId, seats } = req.body
@@ -47,10 +47,34 @@ const createTicket = async (req, res) => {
     res.json({ ticket: ticket })
 
 
-
 }
+*/
 
+const createTicket = async (req, res) => {
+    const { screeningId, customerId, seats } = req.body
+    const seatType = seats.map(x => ({ seatType: x }))
 
+    const bookedTicket = await prisma.ticket.create({
+        data: {
+            screening: {
+                connect: {
+                    id: screeningId
+                }
+
+            },
+            customer: {
+                connect: {
+                    id: customerId
+                }
+            },
+
+            seat: {
+                connect: seatType
+            }
+        }
+    })
+    res.json({ ticket: bookedTicket })
+}
 
 
 

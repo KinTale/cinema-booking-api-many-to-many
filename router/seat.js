@@ -3,6 +3,6 @@ const {getSeats, getScreen, createTicket} = require('../controller/seat')
 const router = express.Router()
 
 router.get('/',  getSeats)
-router.get('/:id',  getScreen)
-router.put('/create', createTicket)
+router.get('/screen/:id',  getScreen)
+router.post('/create', createTicket)
 module.exports = router
